@@ -1,35 +1,38 @@
 package com.example.noteme.adapter;
 
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.noteme.R;
-import com.example.noteme.activity.Edit;
 import com.example.noteme.data.Note;
 
-import java.util.List;
+import java.util.ArrayList;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
-    LayoutInflater inflater;
-    List<Note> notes;
+public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements Filterable {
+    private LayoutInflater inflater;
+    private ArrayList<Note> notes;
+    private ArrayList<Note> searchResultNotes;
 
-    public Adapter(Context context, List<Note> notes){
+    public Adapter(Context context, ArrayList<Note> notes) {
         this.inflater = LayoutInflater.from(context);
         this.notes = notes;
+        this.searchResultNotes = notes;
     }
 
     @NonNull
     @Override
     public Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        //View view = new inflater.inflate(R.layout.custom_list_view, parent, false);
-
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.notes_list_items, parent, false);
 
@@ -38,53 +41,67 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull Adapter.ViewHolder holder, int position) {
-        String title = notes.get(position).getTitle();
-    //    String date = notes.get(position).getDate();
-   //     String time = notes.get(position).getTime();
-        String date = notes.get(position).getContent();
-        long    id       = notes.get(position).getID();
+        String title = searchResultNotes.get(position).getTitle();
 
         //Vadivel: If title is not there removing that appropriate textview
-        if(!title.isEmpty()) {
+
+        if (!TextUtils.isEmpty(title)) {
             holder.nTitle.setText(title);
             holder.nTitle.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             holder.nTitle.setVisibility(View.GONE);
         }
-
-        holder.nDate.setText(date);
-     //   holder.nTime.setText(time);
-        //holder.nID.setText(String.valueOf(notes.get(position).getID()));
+        holder.nDate.setText(searchResultNotes.get(position).getContent());
+        holder.rootLayout.setBackgroundColor(Color.parseColor(searchResultNotes.get(position).getColor()));
     }
 
     @Override
     public int getItemCount() {
-        return notes.size();
+        return searchResultNotes.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String searchText = constraint.toString();
 
-        //TextView nTitle, nDate, nTime, nID;
+                if (TextUtils.isEmpty(searchText)) {
+                    searchResultNotes = notes;
+                } else {
+                    ArrayList<Note> searchArray = new ArrayList<>();
+                    for (Note note : notes) {
+                        if (note.getTitle().toLowerCase().contains(constraint) || note.getContent().toLowerCase().contains(constraint)) {
+                            searchArray.add(note);
+                        }
+                    }
+                    searchResultNotes = searchArray;
+                }
+                FilterResults fR = new FilterResults();
+                fR.values = searchResultNotes;
+                return fR;
+            }
 
-        TextView nTitle, nDate,  nID;
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                notifyDataSetChanged();
+
+            }
+        };
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView nTitle, nDate, nID;
+        LinearLayout rootLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nTitle = itemView.findViewById(R.id.nTitle);
             nDate = itemView.findViewById(R.id.nDate);
-          //  nTime = itemView.findViewById(R.id.nTime);
-            nID     = itemView.findViewById(R.id.listId);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                   Intent i = new Intent(v.getContext(), Edit.class);
-                   i.putExtra("ID",notes.get(getAdapterPosition()).getID());
-                   v.getContext().startActivity(i);
-                  // Toast.makeText(v.getContext(), "Item Clicked", Toast.LENGTH_SHORT).show();
-                }
-            });
+            nID = itemView.findViewById(R.id.listId);
+            rootLayout = itemView.findViewById(R.id.item_content_layout);
         }
     }
 }
