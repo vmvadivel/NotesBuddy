@@ -5,4 +5,15 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
+    <string name="title_placeholder">Title</string>
+    <string name="note_placeholder">Note</string>
+    <string name="last_modification_date">Last modification date</string>
+    <string name="note_actions">Note actions</string>
+    <string name="note_types">note_types</string>
+    <string name="checkbox_notes_button">Checkbox notes button</string>
+    <string name="draw_notes_button">Draw notes button</string>
+    <string name="micro_notes_button">Micro notes button</string>
+    <string name="photo_notes_button">Photo notes button</string>
+    <string name="note_picture">Note picture</string>
+
 </resources>

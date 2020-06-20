@@ -4,26 +4,43 @@ public class Note {
     private long ID;
     private String title;
     private String content;
-    private String date;
-    private String time;
+    private long currentTimestamp;
+    private String color;
 
-    Note() {}
-
-    public Note(String title, String content, String date, String time){
-        this.title = title;
-        this.content = content;
-        this.date = date;
-        this.time = time;
+    Note() {
     }
 
-    Note(long ID, String title, String content, String date, String time){
+    //For New Notes
+    public Note(String title, String content, long timestamp, String color) {
+        this.title = title;
+        this.content = content;
+        this.currentTimestamp = timestamp;
+        this.color = color;
+    }
+
+    //For Notes updates
+    public Note(long ID, String title, String content, long timestamp, String color) {
         this.ID = ID;
         this.title = title;
         this.content = content;
-        this.date = date;
-        this.time = time;
+        this.currentTimestamp = timestamp;
+        this.color = color;
     }
 
+    /*
+        public Note(long ID, String title, String content, String color){
+            this.ID = ID;
+            this.title = title;
+            this.content = content;
+            this.color = color;
+        }
+
+        public Note(String title, String content, String color){
+            this.title = title;
+            this.content = content;
+            this.color = color;
+        }
+    */
     public long getID() {
         return ID;
     }
@@ -48,19 +65,19 @@ public class Note {
         this.content = content;
     }
 
-    public String getDate() {
-        return date;
+    public long getCurrentTimestamp() {
+        return currentTimestamp;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setCurrentTimestamp(long time) {
+        this.currentTimestamp = time;
     }
 
-    public String getTime() {
-        return time;
+    public String getColor() {
+        return color;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setColor(String color) {
+        this.color = color;
     }
 }
