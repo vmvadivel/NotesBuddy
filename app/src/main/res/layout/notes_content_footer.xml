@@ -27,8 +27,9 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:hint="Title"
-                android:inputType="textPersonName"
-                android:textSize="30sp" />
+                android:gravity="start|top"
+                android:inputType="textMultiLine"
+                android:textSize="20sp" />
 
             <EditText
                 android:id="@+id/noteDetails"
