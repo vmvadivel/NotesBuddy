@@ -3,6 +3,7 @@
     android:id="@+id/item_content_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="1dp"
     android:layout_margin="5dp"
     android:background="@drawable/roundededges"
     android:orientation="vertical">
@@ -11,22 +12,22 @@
         android:id="@+id/nTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:text="TextView"
-        android:textSize="20sp"
+        android:textSize="16dp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/nDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:text="TextView"
         android:textSize="16sp"
         android:textStyle="italic" />
@@ -35,9 +36,9 @@
         android:id="@+id/listId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="7dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
         android:text="TextView"
         android:visibility="gone" />
 

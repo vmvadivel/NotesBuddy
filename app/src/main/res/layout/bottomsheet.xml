@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#ffffff"
     android:orientation="vertical"
-    android:padding="16dp"
-    app:behavior_hideable="false"
-    app:behavior_peekHeight="90dp"
-    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+    android:padding="16dp">
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/share_email_whatsapp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_baseline_share_24"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:text="Send" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/share_email_whatsapp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_baseline_share_24"
-            android:drawablePadding="10dp"
-            android:gravity="center"
-            android:text="Send" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/feedback"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/ic_baseline_share_24"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:text="Feedback" />
 
-    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>
 

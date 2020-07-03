@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,13 +22,14 @@ import com.example.noteme.NotesConstants;
 import com.example.noteme.R;
 import com.example.noteme.data.Note;
 import com.example.noteme.data.NoteDatabase;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Random;
 
-public class NoteAddEditDeleteActivity extends AppCompatActivity {
+public class NoteAddEditDeleteActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
     private CoordinatorLayout contentLayout;
@@ -35,6 +39,7 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity {
     private String isFrom;
     private long nid;
     private NoteDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,9 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity {
         noteTitle = findViewById(R.id.noteTitle);
         noteDetails = findViewById(R.id.noteDetails);
         dateText = findViewById(R.id.last_modification_date);
+
+        (findViewById(R.id.note_types_button)).setOnClickListener(this);
+
 
         //Edit
         if (!isFrom.equals(NotesConstants.NOTE_ADDED)) {
@@ -107,22 +115,33 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity {
         setPageColor(); ///Bottomsheet
 
         Intent returnIntent = new Intent();
+
+        boolean isNoteEmpty = (TextUtils.isEmpty(noteTitle.getText().toString()) || TextUtils.isEmpty(noteDetails.getText().toString()));
         if (item.getItemId() == R.id.save) {
             //ADD
+
             if (isFrom.equals(NotesConstants.NOTE_ADDED)) {
-                Note note = new Note(noteTitle.getText().toString(), noteDetails.getText().toString(), System.currentTimeMillis(), noteColor);
-                long id = db.addNote(note);
-                returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_ADDED);
-                returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, id);
-                setResult(Activity.RESULT_OK, returnIntent);
-                onBackPressed();
+                if (!isNoteEmpty) {
+                    Note note = new Note(noteTitle.getText().toString(), noteDetails.getText().toString(), System.currentTimeMillis(), noteColor);
+                    long id = db.addNote(note);
+                    returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_ADDED);
+                    returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, id);
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    onBackPressed();
+                } else {
+                    Toast.makeText(this, "Empty note cannot be saved", Toast.LENGTH_LONG).show();
+                }
             } else { //Edit
-                Note note = new Note(nid, noteTitle.getText().toString(), noteDetails.getText().toString(), System.currentTimeMillis(), noteColor);
-                db.editNote(note);
-                returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_EDITED);
-                returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, nid);
-                setResult(Activity.RESULT_OK, returnIntent);
-                onBackPressed();
+                if (isNoteEmpty) {
+                    Note note = new Note(nid, noteTitle.getText().toString(), noteDetails.getText().toString(), System.currentTimeMillis(), noteColor);
+                    db.editNote(note);
+                    returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_EDITED);
+                    returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, nid);
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    onBackPressed();
+                } else {
+                    Toast.makeText(this, "Empty note cannot be saved", Toast.LENGTH_LONG).show();
+                }
             }
         } else if (item.getItemId() == R.id.delete) {
             db.deleteNote(nid);
@@ -138,17 +157,17 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity {
         int iRnd = rn.nextInt(6);
 
         if (iRnd == 0) {
-            noteColor = "#A7FEEB"; //Cyan
+            noteColor = "#ffffff";
         } else if (iRnd == 1) {
-            noteColor = "#80D8FE";
+            noteColor = "#ffffff";
         } else if (iRnd == 2) {
-            noteColor = "#F9BBD0";
+            noteColor = "#ffffff";
         } else if (iRnd == 3) {
             noteColor = "#D7CCC8";
         } else if (iRnd == 4) {
-            noteColor = "#FF8A80";
+            noteColor = "#ffffff";
         } else {
-            noteColor = "#CFD8DD";
+            noteColor = "#ffffff";
         }
     }
 
@@ -162,5 +181,43 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.note_types_button:
+                showBottomSheet();
+                break;
+            case R.id.note_actions_button:
+                break;
+            case R.id.share_email_whatsapp:
+                shareNotesViaIntent();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void shareNotesViaIntent() {
+        if (!TextUtils.isEmpty(noteDetails.getText().toString())) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, noteTitle.getText().toString());
+            intent.putExtra(Intent.EXTRA_TEXT, noteDetails.getText().toString());
+            startActivity(Intent.createChooser(intent, "App Name"));
+        } else {
+            Toast.makeText(NoteAddEditDeleteActivity.this, "Cannot send empty notes.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showBottomSheet() {
+        View view = getLayoutInflater().inflate(R.layout.bottomsheet, null);
+        view.setBackgroundColor(Color.parseColor(noteColor));
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        dialog.setContentView(view);
+        dialog.show();
+
+        (view.findViewById(R.id.share_email_whatsapp)).setOnClickListener(this);
     }
 }

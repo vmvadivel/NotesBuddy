@@ -2,6 +2,7 @@ package com.example.noteme.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +24,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
     private LayoutInflater inflater;
     private ArrayList<Note> notes;
     private ArrayList<Note> searchResultNotes;
+    private Context context;
 
     public Adapter(Context context, ArrayList<Note> notes) {
         this.inflater = LayoutInflater.from(context);
         this.notes = notes;
         this.searchResultNotes = notes;
+        this.context = context;
     }
 
     @NonNull
@@ -42,8 +45,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
     @Override
     public void onBindViewHolder(@NonNull Adapter.ViewHolder holder, int position) {
         String title = searchResultNotes.get(position).getTitle();
-
-        //Vadivel: If title is not there removing that appropriate textview
+        String content = searchResultNotes.get(position).getContent();
 
         if (!TextUtils.isEmpty(title)) {
             holder.nTitle.setText(title);
@@ -51,8 +53,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
         } else {
             holder.nTitle.setVisibility(View.GONE);
         }
+
+        if (!TextUtils.isEmpty(content)) {
+            holder.nDate.setText(content);
+            holder.nDate.setVisibility(View.VISIBLE);
+        } else {
+            holder.nDate.setVisibility(View.GONE);
+        }
+
         holder.nDate.setText(searchResultNotes.get(position).getContent());
-        holder.rootLayout.setBackgroundColor(Color.parseColor(searchResultNotes.get(position).getColor()));
+        ((GradientDrawable) holder.rootLayout.getBackground()).setColor(Color.parseColor(searchResultNotes.get(position).getColor()));
     }
 
     @Override
@@ -102,6 +112,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
             nDate = itemView.findViewById(R.id.nDate);
             nID = itemView.findViewById(R.id.listId);
             rootLayout = itemView.findViewById(R.id.item_content_layout);
+
         }
     }
 }

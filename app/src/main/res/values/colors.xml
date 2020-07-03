@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="white">#fff</color>
+    <color name="white">#ffffff</color>
     <color name="black">#000</color>
 
 
@@ -32,4 +32,7 @@
 
     <!-- Text colors -->
     <color name="colorHint">#afafaf</color>
+    <color name="colorText">#c0c0c0</color>
+
+
 </resources>
