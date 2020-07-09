@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="white">#ffffff</color>
+    <color name="white">#FAFAFA</color>
     <color name="black">#000</color>
 
 
     <!-- Application colors -->
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#35a9e0</color>
+    <color name="colorPrimaryDark">#35a9e0</color>
+    <color name="colorAccent">#2a2a2c</color>
     <color name="colorAppBackground">#E6E6E6</color>
     <color name="colorBottomToolbar">#FAFAFA</color>
 
@@ -29,10 +29,11 @@
     <!-- Basic colors -->
     <color name="colorBlack">#000000</color>
 
-
     <!-- Text colors -->
-    <color name="colorHint">#afafaf</color>
-    <color name="colorText">#c0c0c0</color>
+    <color name="colorHint">#696969</color>
+    <color name="colorText">#3d3d3d</color>
 
+    <!-- Image colors -->
+    <color name="colorImage">#2C2C2C</color>
 
 </resources>
