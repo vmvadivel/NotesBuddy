@@ -10,7 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -85,10 +85,6 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         noteTitle = findViewById(R.id.noteTitle);
         noteDetails = findViewById(R.id.noteDetails);
 
-        noteTitle.setMovementMethod(LinkMovementMethod.getInstance());
-        noteDetails.setMovementMethod(LinkMovementMethod.getInstance());
-
-
         dateText = findViewById(R.id.last_modification_date);
 
         colorSectionLinearLayout = findViewById((R.id.note_actions_layout));
@@ -119,13 +115,17 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
             noteColor = note.getColor();
             dateText.setText("Edited " + getFormattedDate(note.getCurrentTimestamp()));
             setNoteSelectedColor(noteColor);
+
+            Linkify.addLinks(noteTitle, Linkify.ALL);
+            Linkify.addLinks(noteDetails, Linkify.ALL);
+
         } else {
             dateText.setText("Edited " + new SimpleDateFormat("hh:mm a").format(Calendar.getInstance().getTime()));
         }
 
         noteTitle.requestFocus();
         noteTitle.setSelection(noteTitle.getText().length());
-        noteDetails.requestFocus();
+        //noteDetails.requestFocus();
 
         setBackgroundColor(noteColor);
 
@@ -160,17 +160,12 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
                     noteColor = getResources().getString(R.string.colorNoteGrey);
                 }
                 setBackgroundColor(noteColor);
-
             }
         });
-
     }
 
     @SuppressLint("ResourceType")
     private void setNoteSelectedColor(String noteColor) {
-       /* if (noteColor == getResources().getString(R.color.colorNoteLightBlue)){
-            lightBlueColorRadioButton.setChecked(true);
-        }*/
 
         if (noteColor.equals(getResources().getString(R.string.colorNoteDefault))) {
             defaultColorRadioButton.setChecked(true);
@@ -197,8 +192,6 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         } else if (noteColor.equals(getResources().getString(R.string.colorNoteGrey))) {
             greyColorRadioButton.setChecked(true);
         }
-
-
     }
 
     private void setBackgroundColor(String noteColor) {
@@ -208,7 +201,6 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.parseColor(noteColor));
         }
-
         toolbar.setBackgroundColor(Color.parseColor(noteColor));
         contentLayout.setBackgroundColor(Color.parseColor(noteColor));
     }
@@ -249,9 +241,7 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
 
         Intent returnIntent = new Intent();
 
-        //  boolean isNoteEmpty = (!TextUtils.isEmpty(noteTitle.getText().toString()) || !TextUtils.isEmpty(noteDetails.getText().toString()));
         if (item.getItemId() == R.id.save) {
-            //ADD
 
             if (isFrom.equals(NotesConstants.NOTE_ADDED)) {
                 if (!TextUtils.isEmpty(noteTitle.getText().toString().trim()) || !TextUtils.isEmpty(noteDetails.getText().toString().trim())) {
