@@ -59,6 +59,7 @@ abstract public class SwipeToDeleteItemSupportCallBack extends ItemTouchHelper.C
         c.drawRect(left, top, right, bottom, mClearPaint);
     }
 
+
     @Override
     public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
         return 0.7f;

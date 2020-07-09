@@ -26,14 +26,14 @@
                 android:id="@+id/noteTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autoLink="all"
                 android:background="@android:color/transparent"
                 android:gravity="start|top"
                 android:hint="Title"
                 android:inputType="textMultiLine"
-                android:linksClickable="true"
                 android:textColor="@color/colorText"
                 android:textColorHint="@color/colorHint"
+                android:autoLink="all"
+                android:linksClickable="true"
                 android:textSize="@dimen/text_medium" />
 
             <androidx.appcompat.widget.AppCompatEditText

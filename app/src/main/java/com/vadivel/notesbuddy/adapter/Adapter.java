@@ -57,6 +57,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
         }
 
         holder.nContent.setText(searchResultNotes.get(position).getContent());
+        holder.rootLayout.setAlpha(1);
         ((GradientDrawable) holder.rootLayout.getBackground()).setColor(Color.parseColor(searchResultNotes.get(position).getColor()));
     }
 
