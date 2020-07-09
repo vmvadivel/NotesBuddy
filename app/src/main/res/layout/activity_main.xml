@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -19,8 +20,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="My Notes"
-            app:titleTextColor="@android:color/background_dark" />
+            android:background="@color/white"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/colorText" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -32,8 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_baseline_addlightblue"
-        app:backgroundTint="@color/cardview_dark_background"
-        />
+        app:backgroundTint="@color/white"
+        app:srcCompat="@drawable/ic_fab_add" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

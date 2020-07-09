@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_below="@+id/toolbar"
@@ -19,34 +20,199 @@
             android:id="@+id/relLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp">
+            android:layout_margin="@dimen/margin_medium">
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/noteTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autoLink="all"
                 android:background="@android:color/transparent"
-                android:hint="Title"
                 android:gravity="start|top"
+                android:hint="Title"
                 android:inputType="textMultiLine"
-                android:textSize="20sp" />
+                android:linksClickable="true"
+                android:textColor="@color/colorText"
+                android:textColorHint="@color/colorHint"
+                android:textSize="@dimen/text_medium" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/noteDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/noteTitle"
+                android:layout_marginTop="@dimen/margin_small"
+                android:autoLink="all"
                 android:background="@android:color/transparent"
                 android:gravity="start|top"
                 android:hint="Note"
-                android:inputType="textMultiLine" />
+                android:inputType="textMultiLine"
+                android:linksClickable="true"
+                android:textColor="@color/colorText"
+                android:textColorHint="@color/colorHint"
+                android:textSize="@dimen/text_small" />
         </RelativeLayout>
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/note_actions_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_above="@+id/footLayout"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <HorizontalScrollView
+            android:id="@+id/color_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/color_picker_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingTop="@dimen/padding_small"
+                android:paddingBottom="@dimen/padding_small">
+
+
+                <RadioGroup
+                    android:id="@+id/color_picker_radio_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    tools:ignore="UselessParent">
+
+                    <RadioButton
+                        android:id="@+id/default_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_default"
+                        android:button="@null"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/red_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_red"
+                        android:button="@null"
+                        android:checked="false" />
+
+
+                    <RadioButton
+                        android:id="@+id/orange_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_orange"
+                        android:button="@null"
+                        android:checked="false" />
+
+
+                    <RadioButton
+                        android:id="@+id/yellow_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_yellow"
+                        android:button="@null"
+                        android:checked="false" />
+
+
+                    <RadioButton
+                        android:id="@+id/green_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_green"
+                        android:button="@null"
+                        android:checked="false" />
+
+
+                    <RadioButton
+                        android:id="@+id/cyan_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_cyan"
+                        android:button="@null"
+                        android:checked="false" />
+
+
+                    <RadioButton
+                        android:id="@+id/light_blue_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_light_blue"
+                        android:button="@null"
+                        android:checked="false" />
+
+
+                    <RadioButton
+                        android:id="@+id/dark_blue_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_dark_blue"
+                        android:button="@null"
+                        android:checked="false" />
+
+
+                    <RadioButton
+                        android:id="@+id/purple_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_purple"
+                        android:button="@null"
+                        android:checked="false" />
+
+
+                    <RadioButton
+                        android:id="@+id/pink_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_pink"
+                        android:button="@null"
+                        android:checked="false" />
+
+
+                    <RadioButton
+                        android:id="@+id/brown_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/checkbox_brown"
+                        android:button="@null"
+                        android:checked="false" />
+
+
+                    <RadioButton
+                        android:id="@+id/grey_color_checkbox"
+                        android:layout_width="35dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/checkbox_grey"
+                        android:button="@null"
+                        android:checked="false" />
+
+                </RadioGroup>
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/footLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:gravity="bottom"
         android:orientation="horizontal"
@@ -70,17 +236,19 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="@string/last_modification_date"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/text_small" />
 
         <ImageView
-            android:id="@+id/note_actions_button"
+            android:id="@+id/note_color_chooser"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            android:layout_gravity="end|center_vertical"
             android:layout_weight="0.5"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@string/note_actions"
-            android:src="@drawable/ic_icon_three_dot" />
+            android:src="@drawable/ic_color_chooser" />
     </LinearLayout>
 
 </RelativeLayout>

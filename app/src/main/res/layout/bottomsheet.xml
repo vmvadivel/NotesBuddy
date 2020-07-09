@@ -3,31 +3,32 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff"
+    android:background="@color/white"
     android:orientation="vertical"
-    android:padding="16dp">
-
+    android:padding="@dimen/padding_medium">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/share_email_whatsapp"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_weight="1"
         android:drawableLeft="@drawable/ic_baseline_share_24"
-        android:drawablePadding="10dp"
+        android:drawablePadding="@dimen/padding_small"
         android:gravity="center_vertical"
-        android:text="Send" />
+        android:text="Share"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_small" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/feedback"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/ic_baseline_share_24"
-        android:drawablePadding="10dp"
+        android:layout_marginTop="@dimen/margin_small"
+        android:drawableLeft="@drawable/ic_feedback"
+        android:drawablePadding="@dimen/padding_small"
         android:gravity="center_vertical"
-        android:text="Feedback" />
+        android:text="Feedback"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_small" />
 
 </LinearLayout>
 

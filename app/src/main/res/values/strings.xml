@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Notes</string>
+    <string name="app_name">NotesBuddy</string>
     <string name="title_activity_details">Details</string>
 
     <string name="next">Next</string>
@@ -15,5 +15,19 @@
     <string name="micro_notes_button">Micro notes button</string>
     <string name="photo_notes_button">Photo notes button</string>
     <string name="note_picture">Note picture</string>
+
+    <!-- Note colors -->
+    <string name="colorNoteDefault">#FAFAFA</string>
+    <string name="colorNoteRed">#FF8A80</string>
+    <string name="colorNoteOrange">#FFD181</string>
+    <string name="colorNoteYellow">#FFFF8D</string>
+    <string name="colorNoteGreen">#CDFF90</string>
+    <string name="colorNoteCyan">#A7FEEB</string>
+    <string name="colorNoteLightBlue">#80D8FE</string>
+    <string name="colorNoteDarkBlue">#82B1FF</string>
+    <string name="colorNotePurple">#B388FE</string>
+    <string name="colorNotePink">#F9BBD0</string>
+    <string name="colorNoteBrow">#D7CCC8</string>
+    <string name="colorNoteGrey">#CFD8DD</string>
 
 </resources>

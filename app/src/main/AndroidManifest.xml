@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.noteme">
+    package="com.vadivel.notesbuddy">
 
     <application
-        android:name=".NotesApplication"
+        android:name="com.vadivel.notesbuddy.NotesApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.NoteAddEditDeleteActivity"></activity>
-        <activity android:name=".activity.MainActivity">
+        <activity android:name="com.vadivel.notesbuddy.activity.NoteAddEditDeleteActivity"></activity>
+        <activity android:name="com.vadivel.notesbuddy.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

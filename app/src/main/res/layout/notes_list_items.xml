@@ -3,8 +3,7 @@
     android:id="@+id/item_content_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="1dp"
-    android:layout_margin="5dp"
+    android:layout_margin="@dimen/margin_min"
     android:background="@drawable/roundededges"
     android:orientation="vertical">
 
@@ -12,34 +11,27 @@
         android:id="@+id/nTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:text="TextView"
-        android:textSize="16dp"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_small"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_small"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/nDate"
+        android:id="@+id/nContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:text="TextView"
-        android:textSize="16sp"
-        android:textStyle="italic" />
-
-    <TextView
-        android:id="@+id/listId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginBottom="1dp"
-        android:text="TextView"
-        android:visibility="gone" />
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:ellipsize="end"
+        android:maxLines="11"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_small"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_small" />
 
 </LinearLayout>
