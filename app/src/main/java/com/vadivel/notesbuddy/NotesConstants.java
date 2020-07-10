@@ -4,6 +4,7 @@ public class NotesConstants {
     //constants for IntentExtras
     public static final String KEY_IS_FROM = "key_is_from";
     public static final String KEY_NOTE_ID = "key_note_id";
+    public static final String KEY_NOTE_NOT_MODIFIED = "key_note_not_modified";
 
     //Other Constants
     public static final String NOTE_ADDED = "added";

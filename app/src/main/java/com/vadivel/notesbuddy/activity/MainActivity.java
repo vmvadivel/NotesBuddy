@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PREF_LAYOUT_MODE = "pref_layout_mode";
     private Adapter adapter;
     private ArrayList<Note> notes = new ArrayList<>();
-    private RelativeLayout emptyLayout;
+    private ScrollView emptyLayout;
     private NoteDatabase db;
     private int lastNoteClickPosition = -1;
     private CoordinatorLayout coordinatorLayout;
@@ -165,9 +165,11 @@ public class MainActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                     showSnackBar("Note Added");
                 } else if (data.getStringExtra(NotesConstants.KEY_IS_FROM).equals(NotesConstants.NOTE_EDITED)) {
-                    notes.set(lastNoteClickPosition, db.getNote(data.getLongExtra(NotesConstants.KEY_NOTE_ID, 0)));
-                    adapter.notifyItemChanged(lastNoteClickPosition);
-                    showSnackBar("Note Modified");
+                    if (data.getBooleanExtra(NotesConstants.KEY_NOTE_NOT_MODIFIED, false) == false) {
+                        notes.set(lastNoteClickPosition, db.getNote(data.getLongExtra(NotesConstants.KEY_NOTE_ID, 0)));
+                        adapter.notifyItemChanged(lastNoteClickPosition);
+                        showSnackBar("Note Modified");
+                    }
                 } else if (data.getStringExtra(NotesConstants.KEY_IS_FROM).equals(NotesConstants.NOTE_DELETED)) {
                     notes.remove(lastNoteClickPosition);
                     adapter.notifyItemRemoved(lastNoteClickPosition);
@@ -176,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                 toggleView();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //  showSnackBar("Note Changes Discarded");
+                // showSnackBar("Note Changes Discarded");
             }
         }
     }//onActivityResult

@@ -31,6 +31,7 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.vadivel.notesbuddy.NotesConstants;
 import com.vadivel.notesbuddy.R;
@@ -66,6 +67,7 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
     private RadioButton pinkColorRadioButton;
     private RadioButton brownColorRadioButton;
     private RadioButton greyColorRadioButton;
+    private Note noteFromIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +80,9 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //to display back button
-
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorImage), PorterDuff.Mode.SRC_ATOP);
+
 
         contentLayout = findViewById(R.id.contentParent);
         noteTitle = findViewById(R.id.noteTitle);
@@ -106,14 +109,15 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         (findViewById(R.id.note_types_button)).setOnClickListener(this);
         (findViewById(R.id.note_color_chooser)).setOnClickListener(this);
 
+
         //Edit
         if (!isFrom.equals(NotesConstants.NOTE_ADDED)) {
             nid = getIntent().getLongExtra(NotesConstants.KEY_NOTE_ID, 0);
-            Note note = db.getNote(nid);
-            noteTitle.setText(note.getTitle());
-            noteDetails.setText(note.getContent());
-            noteColor = note.getColor();
-            dateText.setText("Edited " + getFormattedDate(note.getCurrentTimestamp()));
+            noteFromIntent = db.getNote(nid);
+            noteTitle.setText(noteFromIntent.getTitle());
+            noteDetails.setText(noteFromIntent.getContent());
+            noteColor = noteFromIntent.getColor();
+            dateText.setText("Edited " + getFormattedDate(noteFromIntent.getCurrentTimestamp()));
             setNoteSelectedColor(noteColor);
 
             Linkify.addLinks(noteTitle, Linkify.ALL);
@@ -125,7 +129,6 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
 
         noteTitle.requestFocus();
         noteTitle.setSelection(noteTitle.getText().length());
-        //noteDetails.requestFocus();
 
         setBackgroundColor(noteColor);
 
@@ -242,49 +245,75 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         Intent returnIntent = new Intent();
 
         if (item.getItemId() == R.id.save) {
-
-            if (isFrom.equals(NotesConstants.NOTE_ADDED)) {
-                if (!TextUtils.isEmpty(noteTitle.getText().toString().trim()) || !TextUtils.isEmpty(noteDetails.getText().toString().trim())) {
-                    Note note = new Note(noteTitle.getText().toString(), noteDetails.getText().toString(), System.currentTimeMillis(), noteColor);
-                    long id = db.addNote(note);
-                    returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_ADDED);
-                    returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, id);
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    onBackPressed();
-                } else {
-                    Toast.makeText(this, "Empty note cannot be saved", Toast.LENGTH_LONG).show();
-                }
-            } else { //Edit
-                if (!TextUtils.isEmpty(noteTitle.getText().toString().trim()) || !TextUtils.isEmpty(noteDetails.getText().toString().trim())) {
-                    Note note = new Note(nid, noteTitle.getText().toString(), noteDetails.getText().toString(), System.currentTimeMillis(), noteColor);
-                    db.editNote(note);
-                    returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_EDITED);
-                    returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, nid);
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    onBackPressed();
-                } else {
-                    Toast.makeText(this, "Empty note cannot be saved", Toast.LENGTH_LONG).show();
-                }
-            }
+            addOrEdit(returnIntent, false);
         } else if (item.getItemId() == R.id.delete) {
             db.deleteNote(nid);
             returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_DELETED);
             setResult(Activity.RESULT_OK, returnIntent);
-            onBackPressed();
+            //onBackPressed();
+            super.onBackPressed();
+        } else if (item.getItemId() == android.R.id.home) {
+            //  Toast.makeText(this, "Back pressed",Toast.LENGTH_LONG).show();
+            addOrEdit(returnIntent, true);
         }
         return super.onOptionsItemSelected(item);
+
+    }
+
+    private void addOrEdit(Intent returnIntent, boolean isBackButtonPressed) {
+        if (isFrom.equals(NotesConstants.NOTE_ADDED)) {
+            if (!TextUtils.isEmpty(noteTitle.getText().toString().trim()) || !TextUtils.isEmpty(noteDetails.getText().toString().trim())) {
+                Note note = new Note(noteTitle.getText().toString(), noteDetails.getText().toString(), System.currentTimeMillis(), noteColor);
+                long id = db.addNote(note);
+                returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_ADDED);
+                returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, id);
+                setResult(Activity.RESULT_OK, returnIntent);
+                // onBackPressed();
+                super.onBackPressed();
+            } else {
+                if (!isBackButtonPressed) {
+                    Toast.makeText(this, "Empty note cannot be saved", Toast.LENGTH_LONG).show();
+                } else {
+                    //onBackPressed();
+                    super.onBackPressed();
+                }
+            }
+        } else { //Edit
+            if (!TextUtils.isEmpty(noteTitle.getText().toString().trim()) || !TextUtils.isEmpty(noteDetails.getText().toString().trim())) {
+                if (noteFromIntent.getTitle().equals(noteTitle.getText().toString()) && noteFromIntent.getContent().equals(noteDetails.getText().toString())) {
+                    returnIntent.putExtra(NotesConstants.KEY_NOTE_NOT_MODIFIED, true);
+                } else {
+                    Note note = new Note(nid, noteTitle.getText().toString(), noteDetails.getText().toString(), System.currentTimeMillis(), noteColor);
+                    db.editNote(note);
+                    returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, nid);
+                }
+                returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_EDITED);
+                setResult(Activity.RESULT_OK, returnIntent);
+                //onBackPressed();
+                super.onBackPressed();
+            } else {
+                if (!isBackButtonPressed) {
+                    Toast.makeText(this, "Empty note cannot be saved", Toast.LENGTH_LONG).show();
+                } else {
+                    // onBackPressed();
+                    super.onBackPressed();
+                }
+
+            }
+        }
     }
 
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        addOrEdit(new Intent(), true);
+        // super.onBackPressed();
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
+        //onBackPressed();
+        return false;
     }
 
     @Override
@@ -308,6 +337,9 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
             case R.id.share_email_whatsapp:
                 shareNotesViaIntent();
                 break;
+            case R.id.feedback:
+                showFeedbackDialog();
+                break;
             default:
                 break;
         }
@@ -319,7 +351,7 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, noteTitle.getText().toString());
             intent.putExtra(Intent.EXTRA_TEXT, noteDetails.getText().toString());
-            startActivity(Intent.createChooser(intent, "App Name"));
+            startActivity(Intent.createChooser(intent, getResources().getString(R.string.app_name)));
         } else {
             Toast.makeText(NoteAddEditDeleteActivity.this, "Cannot send empty notes.", Toast.LENGTH_LONG).show();
         }
@@ -328,11 +360,16 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
     private void showBottomSheet() {
         View view = getLayoutInflater().inflate(R.layout.bottomsheet, null);
         view.setBackgroundColor(Color.parseColor(noteColor));
-        BottomSheetDialog dialog = new BottomSheetDialog(this);
-        dialog.setContentView(view);
-        dialog.show();
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.show();
+
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheetDialog.findViewById(com.google.android.material.R.id.design_bottom_sheet));
+        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        behavior.setPeekHeight(0);
 
         (view.findViewById(R.id.share_email_whatsapp)).setOnClickListener(this);
+        (view.findViewById(R.id.feedback)).setOnClickListener(this);
     }
 
     private void showFeedbackDialog() {
@@ -367,4 +404,6 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         });
         dialog.show();
     }
+
+
 }
