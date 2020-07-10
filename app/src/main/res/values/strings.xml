@@ -29,5 +29,9 @@
     <string name="colorNotePink">#F9BBD0</string>
     <string name="colorNoteBrow">#D7CCC8</string>
     <string name="colorNoteGrey">#CFD8DD</string>
+    <string name="empty_text_subtext">Tap the \'+\' icon to get started.</string>
+    <string name="empty_text">Save your Notes, and it will show up here.</string>
+    <string name="hint_note_description">Note</string>
+    <string name="hint_title">Title</string>
 
 </resources>

@@ -9,6 +9,7 @@
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_medium">16dp</dimen>
     //Text Sizes
+    <dimen name="text_min">12sp</dimen>
     <dimen name="text_small">16sp</dimen>
     <dimen name="text_medium">24sp</dimen>
 </resources>
