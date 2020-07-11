@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         notes = db.getNotes();
 
         recyclerView = findViewById(R.id.listOfNotes);
+        recyclerView.setBackgroundColor(getResources().getColor(R.color.white));
         staggeredGridLayoutManager = new StaggeredGridLayoutManager((getVerticalMode() ? 1 : 2), StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         emptyLayout = findViewById(R.id.emptyLayout);
