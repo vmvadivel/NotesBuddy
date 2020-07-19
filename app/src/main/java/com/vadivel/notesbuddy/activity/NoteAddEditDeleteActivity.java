@@ -2,12 +2,14 @@ package com.vadivel.notesbuddy.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.util.Linkify;
@@ -40,11 +42,13 @@ import com.vadivel.notesbuddy.data.NoteDatabase;
 import com.vadivel.notesbuddy.utils.AppFeedBackUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
 public class NoteAddEditDeleteActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final int REQ_CODE_SPEECH_INPUT = 112;
     private Toolbar toolbar;
     private CoordinatorLayout contentLayout;
     private AppCompatEditText noteTitle, noteDetails;
@@ -249,15 +253,13 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         } else if (item.getItemId() == R.id.delete) {
             db.deleteNote(nid);
             returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_DELETED);
+            returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, nid);
             setResult(Activity.RESULT_OK, returnIntent);
-            //onBackPressed();
             super.onBackPressed();
         } else if (item.getItemId() == android.R.id.home) {
-            //  Toast.makeText(this, "Back pressed",Toast.LENGTH_LONG).show();
             addOrEdit(returnIntent, true);
         }
         return super.onOptionsItemSelected(item);
-
     }
 
     private void addOrEdit(Intent returnIntent, boolean isBackButtonPressed) {
@@ -268,19 +270,17 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
                 returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_ADDED);
                 returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, id);
                 setResult(Activity.RESULT_OK, returnIntent);
-                // onBackPressed();
                 super.onBackPressed();
             } else {
                 if (!isBackButtonPressed) {
                     Toast.makeText(this, "Empty note cannot be saved", Toast.LENGTH_LONG).show();
                 } else {
-                    //onBackPressed();
                     super.onBackPressed();
                 }
             }
         } else { //Edit
             if (!TextUtils.isEmpty(noteTitle.getText().toString().trim()) || !TextUtils.isEmpty(noteDetails.getText().toString().trim())) {
-                if (noteFromIntent.getTitle().equals(noteTitle.getText().toString()) && noteFromIntent.getContent().equals(noteDetails.getText().toString())) {
+                if (noteFromIntent.getTitle().equals(noteTitle.getText().toString()) && noteFromIntent.getContent().equals(noteDetails.getText().toString()) && noteFromIntent.getColor().equals(noteColor)) {
                     returnIntent.putExtra(NotesConstants.KEY_NOTE_NOT_MODIFIED, true);
                 } else {
                     Note note = new Note(nid, noteTitle.getText().toString(), noteDetails.getText().toString(), System.currentTimeMillis(), noteColor);
@@ -289,16 +289,13 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
                 }
                 returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_EDITED);
                 setResult(Activity.RESULT_OK, returnIntent);
-                //onBackPressed();
                 super.onBackPressed();
             } else {
                 if (!isBackButtonPressed) {
                     Toast.makeText(this, "Empty note cannot be saved", Toast.LENGTH_LONG).show();
                 } else {
-                    // onBackPressed();
                     super.onBackPressed();
                 }
-
             }
         }
     }
@@ -307,12 +304,10 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
     @Override
     public void onBackPressed() {
         addOrEdit(new Intent(), true);
-        // super.onBackPressed();
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        //onBackPressed();
         return false;
     }
 
@@ -324,7 +319,6 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
                 break;
             case R.id.note_color_chooser:
                 if (colorSectionLinearLayout.getVisibility() == View.GONE) {
-
                     Animation animation;
                     animation = AnimationUtils.loadAnimation(getApplicationContext(),
                             R.anim.animation);
@@ -333,6 +327,9 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
                 } else {
                     colorSectionLinearLayout.setVisibility(View.GONE);
                 }
+                break;
+            case R.id.voice_to_text:
+                promptSpeechInput();
                 break;
             case R.id.share_email_whatsapp:
                 shareNotesViaIntent();
@@ -346,7 +343,7 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
     }
 
     private void shareNotesViaIntent() {
-        if (!TextUtils.isEmpty(noteDetails.getText().toString())) {
+        if (!TextUtils.isEmpty(noteDetails.getText().toString().trim())) {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, noteTitle.getText().toString());
@@ -368,6 +365,7 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         behavior.setPeekHeight(0);
 
+        (view.findViewById(R.id.voice_to_text)).setOnClickListener(this);
         (view.findViewById(R.id.share_email_whatsapp)).setOnClickListener(this);
         (view.findViewById(R.id.feedback)).setOnClickListener(this);
     }
@@ -375,11 +373,10 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
     private void showFeedbackDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(NoteAddEditDeleteActivity.this);
 
-        builder.setMessage("If you enjoy using " + AppFeedBackUtil.APP_NAME + ", please take a moment to rate it. Thanks for your support!");
+        builder.setMessage("If you enjoy using " + AppFeedBackUtil.APP_NAME + ", please take a moment to rate us. Thanks for your support!");
         builder.setPositiveButton("Rate Us",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + AppFeedBackUtil.APP_PACKAGE_NAME)));
                         AppFeedBackUtil.goToMarket(NoteAddEditDeleteActivity.this);
                         dialog.dismiss();
                     }
@@ -388,7 +385,6 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         builder.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                         dialog.dismiss();
                     }
                 });
@@ -405,5 +401,46 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         dialog.show();
     }
 
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+                    if (this.getCurrentFocus().getId() == noteTitle.getId()) {
+                        setVoiceResultText(result.get(0), noteTitle);
+                    } else if (this.getCurrentFocus().getId() == noteDetails.getId()) {
+                        setVoiceResultText(result.get(0), noteDetails);
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    private void setVoiceResultText(String result, AppCompatEditText editText) {
+        String currentText = editText.getText().toString().trim();
+        editText.setText(TextUtils.isEmpty(currentText) ? result : currentText + " " + result);
+        editText.setSelection(currentText.length());
+    }
 }

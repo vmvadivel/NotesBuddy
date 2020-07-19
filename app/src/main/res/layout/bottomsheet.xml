@@ -8,6 +8,17 @@
     android:padding="@dimen/padding_medium">
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/voice_to_text"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:drawableLeft="@drawable/ic_microphone"
+        android:drawablePadding="@dimen/padding_small"
+        android:gravity="center_vertical"
+        android:text="Dictate"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_small" />
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/share_email_whatsapp"
         android:layout_width="match_parent"
         android:layout_height="40dp"

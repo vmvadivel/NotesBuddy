@@ -47,10 +47,10 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Note> notes = new ArrayList<>();
     private ScrollView emptyLayout;
     private NoteDatabase db;
-    private int lastNoteClickPosition = -1;
     private CoordinatorLayout coordinatorLayout;
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
     private SharedPreferences mSharedPreferences;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +103,8 @@ public class MainActivity extends AppCompatActivity {
                 recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, final int position) {
-                lastNoteClickPosition = position;
                 Intent intent = new Intent(MainActivity.this, NoteAddEditDeleteActivity.class);
-                intent.putExtra(NotesConstants.KEY_NOTE_ID, notes.get(position).getID());
+                intent.putExtra(NotesConstants.KEY_NOTE_ID, adapter.getNotesFromAdapter().get(position).getID());
                 intent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_EDITED);
                 startActivityForResult(intent, REQUEST_CODE);
             }
@@ -167,19 +166,22 @@ public class MainActivity extends AppCompatActivity {
                     showSnackBar("Note Added");
                 } else if (data.getStringExtra(NotesConstants.KEY_IS_FROM).equals(NotesConstants.NOTE_EDITED)) {
                     if (data.getBooleanExtra(NotesConstants.KEY_NOTE_NOT_MODIFIED, false) == false) {
-                        notes.set(lastNoteClickPosition, db.getNote(data.getLongExtra(NotesConstants.KEY_NOTE_ID, 0)));
-                        adapter.notifyItemChanged(lastNoteClickPosition);
+                        long id = data.getLongExtra(NotesConstants.KEY_NOTE_ID, 0);
+                        setUpdatedNote(notes, id);
+                        setUpdatedNote(adapter.getNotesFromAdapter(), id);
+                        if (searchView.getQuery().toString().trim().length() > 0) {
+                            adapter.getFilter().filter(searchView.getQuery());
+                        }
+                        adapter.notifyDataSetChanged();
                         showSnackBar("Note Modified");
                     }
                 } else if (data.getStringExtra(NotesConstants.KEY_IS_FROM).equals(NotesConstants.NOTE_DELETED)) {
-                    notes.remove(lastNoteClickPosition);
-                    adapter.notifyItemRemoved(lastNoteClickPosition);
-                    showSnackBar("Note Deleted");
+                    removeNoteFromList(data.getLongExtra(NotesConstants.KEY_NOTE_ID, 0));
                 }
                 toggleView();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                // showSnackBar("Note Changes Discarded");
+
             }
         }
     }//onActivityResult
@@ -192,7 +194,8 @@ public class MainActivity extends AppCompatActivity {
         toggleMenuItem.setIcon(getVerticalMode() ? R.drawable.ic_baseline_grid_24 : R.drawable.ic_baseline_linear_view_24);
         MenuItem searchViewItem = menu.findItem(R.id.app_bar_search);
 
-        final SearchView searchView = (SearchView) searchViewItem.getActionView();
+        searchView = (SearchView) searchViewItem.getActionView();
+
         ImageView searchClose = searchView.findViewById(androidx.appcompat.R.id.search_close_btn);
         searchClose.setImageResource(R.drawable.ic_search_close);
 
@@ -218,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.toggleLayout) {
-            //Toggle the image and layout
+
             if (staggeredGridLayoutManager.getSpanCount() == 1) {
                 item.setIcon(R.drawable.ic_baseline_linear_view_24);
                 staggeredGridLayoutManager.setSpanCount(2);
@@ -248,12 +251,43 @@ public class MainActivity extends AppCompatActivity {
                 final int position = viewHolder.getAdapterPosition();
                 final Note item = adapter.getNotesFromAdapter().get(position);
                 db.deleteNote(item.getID());
-                adapter.removeNoteFromAdapter(position);
-                showSnackBar("Note Deleted");
+                removeNoteFromList(item.getID());
                 toggleView();
             }
         };
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
         itemTouchhelper.attachToRecyclerView(recyclerView);
     }
+
+    private void removeNoteFromList(long id) {
+        removeNote(notes, id);
+        removeNote(adapter.getNotesFromAdapter(), id);
+
+        if (searchView.getQuery().toString().trim().length() > 0) {
+            adapter.getFilter().filter(searchView.getQuery());
+        }
+
+        adapter.notifyDataSetChanged();
+        showSnackBar("Note Deleted");
+    }
+
+    private void setUpdatedNote(ArrayList<Note> notes, Long noteID) {
+        Note updateNote = db.getNote(noteID);
+        for (int i = 0; i < notes.size(); i++) {
+            if (notes.get(i).getID() == noteID) {
+                notes.set(i, updateNote);
+                break;
+            }
+        }
+    }
+
+    private void removeNote(ArrayList<Note> notes, Long noteID) {
+        for (int i = 0; i < notes.size(); i++) {
+            if (notes.get(i).getID() == noteID) {
+                notes.remove(i);
+                break;
+            }
+        }
+    }
+
 }

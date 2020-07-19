@@ -11,9 +11,8 @@ import java.util.ArrayList;
 public class NoteDatabase extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 2;
-    private static final String DATABASE_NAME = "notesdb"; //Vadivel Learning: initially had string lowercase s which throwed an error cannot resolve method super
-    private static final String DATABASE_TABLE = "notestable"; //Vadivel Learning: initially had string lowercase s which throwed an error cannot resolve method super
-
+    private static final String DATABASE_NAME = "notesdb";
+    private static final String DATABASE_TABLE = "notestable";
 
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
@@ -23,7 +22,6 @@ public class NoteDatabase extends SQLiteOpenHelper {
 
     public NoteDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-
     }
 
     @Override
@@ -41,8 +39,6 @@ public class NoteDatabase extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion >= newVersion)
             return;
-        db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
-        onCreate(db);
     }
 
     public long addNote(Note note) {
@@ -61,14 +57,10 @@ public class NoteDatabase extends SQLiteOpenHelper {
 
     public Note getNote(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        //String Query = "SELECT KEY_ID, KEY_TITLE, KEY_CONTENT, KEY_DATE, KEY_TIME FROM " + DATABASE_TABLE + " WHERE KEY_ID = " + id;
-        //db.execSQL(Query);
 
-        //Vadivel - its a pointer to a specific record in our table.
         Cursor cursor = db.query(DATABASE_TABLE, new String[]{KEY_ID, KEY_TITLE, KEY_CONTENT, KEY_DATE_TIME, KEY_COLOR}, KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null);
 
-        //cursor will start with -1 index so we need to move to the first record manually
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -78,19 +70,15 @@ public class NoteDatabase extends SQLiteOpenHelper {
                 cursor.getLong(cursor.getColumnIndex(KEY_DATE_TIME)),
                 cursor.getString(cursor.getColumnIndex(KEY_COLOR)));
 
-        //Vadivel: Things typed like the one below and opted for Inline variable from the tip (bulb icon) converts to what it looks in the subsequent line
-        //Note note = new Note(cursor.getLong(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
         cursor.close();
         db.close();
         return note;
     }
 
-    //Its a generic List
     public ArrayList<Note> getNotes() {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Note> allNotes = new ArrayList<>();
 
-        // String Query = "SELECT KEY_ID, KEY_TITLE, KEY_CONTENT, KEY_DATE, KEY_TIME FROM " + DATABASE_TABLE;
         String Query = "SELECT  * FROM " + DATABASE_TABLE + " ORDER BY " + KEY_ID + " DESC";
 
         Cursor cursor = db.rawQuery(Query, null);
