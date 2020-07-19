@@ -23,6 +23,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
     private ArrayList<Note> notes;
     private ArrayList<Note> searchResultNotes;
 
+
     public Adapter(ArrayList<Note> notes) {
         this.notes = notes;
         this.searchResultNotes = notes;
@@ -71,7 +72,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                String searchText = constraint.toString();
+                String searchText = constraint.toString().trim();
 
                 if (TextUtils.isEmpty(searchText)) {
                     searchResultNotes = notes;
@@ -86,6 +87,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
                 }
                 FilterResults fR = new FilterResults();
                 fR.values = searchResultNotes;
+                //    emptySearchResultListener.callBack(searchResultNotes.size());
                 return fR;
             }
 
@@ -101,11 +103,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
         return searchResultNotes;
     }
 
-    public void removeNoteFromAdapter(int position) {
-        searchResultNotes.remove(position);
-        notifyItemRemoved(position);
-
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -119,4 +116,5 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
             rootLayout = itemView.findViewById(R.id.item_content_layout);
         }
     }
+
 }

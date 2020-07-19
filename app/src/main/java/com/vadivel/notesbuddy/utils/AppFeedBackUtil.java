@@ -47,7 +47,7 @@ public class AppFeedBackUtil {
     private static void showDialog(final Context mContext, final SharedPreferences.Editor editor) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setCancelable(false);
-        builder.setMessage("If you enjoy using " + APP_NAME + ", please take a moment to rate it. Thanks for your support!");
+        builder.setMessage("If you enjoy using " + APP_NAME + ", please take a moment to rate us. Thanks for your support!");
         builder.setPositiveButton("Rate Us",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
