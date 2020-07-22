@@ -19,6 +19,7 @@ public class NoteDatabase extends SQLiteOpenHelper {
     private static final String KEY_CONTENT = "content";
     private static final String KEY_DATE_TIME = "date_time";
     private static final String KEY_COLOR = "color";
+    private static final String KEY_SOFT_DELETE = "soft_delete";
 
     public NoteDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -30,13 +31,15 @@ public class NoteDatabase extends SQLiteOpenHelper {
                 KEY_TITLE + " TEXT," +
                 KEY_CONTENT + " TEXT," +
                 KEY_DATE_TIME + " LONG," +
-                KEY_COLOR + " TEXT " + ")";
+                KEY_COLOR + " TEXT," +
+                KEY_SOFT_DELETE + " BOOLEAN" + ")";
 
         db.execSQL(query);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //todo: need to update soft delete logic
         if (oldVersion >= newVersion)
             return;
     }
@@ -79,7 +82,7 @@ public class NoteDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Note> allNotes = new ArrayList<>();
 
-        String Query = "SELECT  * FROM " + DATABASE_TABLE + " ORDER BY " + KEY_ID + " DESC";
+        String Query = "SELECT  * FROM " + DATABASE_TABLE + " WHERE " + KEY_SOFT_DELETE + " IS NULL OR " + KEY_SOFT_DELETE + " = 0 " + " ORDER BY " + KEY_ID + " DESC";
 
         Cursor cursor = db.rawQuery(Query, null);
         if (cursor.moveToFirst()) {
@@ -117,5 +120,15 @@ public class NoteDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(DATABASE_TABLE, KEY_ID + "=?", new String[]{String.valueOf(id)});
         db.close();
+    }
+
+    public long softDelete(long noteID, boolean isSoftDeleteEnabled) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_SOFT_DELETE, isSoftDeleteEnabled);
+        long id = db.update(DATABASE_TABLE, contentValues,
+                KEY_ID + "=?", new String[]{String.valueOf(noteID)});
+        db.close();
+        return id;
     }
 }

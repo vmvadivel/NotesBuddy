@@ -117,4 +117,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
         }
     }
 
+    public void updateSearchResultNotes(ArrayList<Note> notes) {
+        searchResultNotes = notes;
+    }
 }

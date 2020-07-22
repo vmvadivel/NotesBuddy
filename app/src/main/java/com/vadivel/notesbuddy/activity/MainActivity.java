@@ -39,28 +39,33 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private final int REQUEST_CODE = 111;
     private Toolbar toolbar;
     private RecyclerView recyclerView;
-    private static final String PREF_LAYOUT_MODE = "pref_layout_mode";
-    private Adapter adapter;
-    private ArrayList<Note> notes = new ArrayList<>();
+    private final int REQUEST_CODE = 111;
     private ScrollView emptyLayout;
-    private NoteDatabase db;
+    private SearchView searchView;
     private CoordinatorLayout coordinatorLayout;
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
+    private static final String PREF_LAYOUT_MODE = "pref_layout_mode";
+
+    private ArrayList<Note> notes = new ArrayList<>();
+    private Adapter adapter;
+    private NoteDatabase db;
     private SharedPreferences mSharedPreferences;
-    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        init();
+    }
+
+    private void init() {
 
         AppFeedBackUtil.appLaunched(this);
-
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         Field mCollapseIcon = null;
         try {
@@ -73,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        setSupportActionBar(toolbar);
-
         db = new NoteDatabase(this);
         notes = db.getNotes();
 
@@ -82,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setBackgroundColor(getResources().getColor(R.color.white));
         staggeredGridLayoutManager = new StaggeredGridLayoutManager((getVerticalMode() ? 1 : 2), StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
+        attachSwipeToDeleteRecyclerView();
         emptyLayout = findViewById(R.id.emptyLayout);
         coordinatorLayout = findViewById(R.id.root_coordinator_layout);
 
@@ -97,8 +101,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        attachSwipeToDeleteRecyclerView();
-
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this,
                 recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
@@ -113,8 +115,6 @@ public class MainActivity extends AppCompatActivity {
             public void onLongClick(View view, int position) {
             }
         }));
-
-
     }
 
     private void showSnackBar(String Message) {
@@ -221,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.toggleLayout) {
-
             if (staggeredGridLayoutManager.getSpanCount() == 1) {
                 item.setIcon(R.drawable.ic_baseline_linear_view_24);
                 staggeredGridLayoutManager.setSpanCount(2);
@@ -250,8 +249,27 @@ public class MainActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
                 final int position = viewHolder.getAdapterPosition();
                 final Note item = adapter.getNotesFromAdapter().get(position);
-                db.deleteNote(item.getID());
+                // db.deleteNote(item.getID());
+                db.softDelete(item.getID(), true);
                 removeNoteFromList(item.getID());
+
+                Snackbar.make(coordinatorLayout, "Deleted", Snackbar.LENGTH_LONG)
+                        .setAction("UNDO", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                db.softDelete(item.getID(), false);
+                                notes.add(position, item);
+                                adapter.updateSearchResultNotes(notes);
+                                if (searchView.getQuery().toString().trim().length() > 0) {
+                                    adapter.getFilter().filter(searchView.getQuery());
+                                }
+                                adapter.notifyDataSetChanged();
+                                toggleView();
+                            }
+                        })
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+
                 toggleView();
             }
         };
@@ -261,14 +279,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void removeNoteFromList(long id) {
         removeNote(notes, id);
-        removeNote(adapter.getNotesFromAdapter(), id);
+        // removeNote(adapter.getNotesFromAdapter(), id);
 
         if (searchView.getQuery().toString().trim().length() > 0) {
             adapter.getFilter().filter(searchView.getQuery());
         }
 
         adapter.notifyDataSetChanged();
-        showSnackBar("Note Deleted");
+        //  showSnackBar("Note Deleted");
     }
 
     private void setUpdatedNote(ArrayList<Note> notes, Long noteID) {
@@ -289,5 +307,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 }
