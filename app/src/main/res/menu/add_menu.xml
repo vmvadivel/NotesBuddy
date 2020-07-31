@@ -17,5 +17,4 @@
         android:title="Layout Toggle"
 
         app:showAsAction="ifRoom" />
-
 </menu>

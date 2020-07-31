@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class NoteDatabase extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "notesdb";
     private static final String DATABASE_TABLE = "notestable";
 
@@ -25,23 +25,26 @@ public class NoteDatabase extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    private static final String SOURCE_DATABASE_CREATE = "CREATE TABLE " + DATABASE_TABLE + "( " + KEY_ID + " INTEGER PRIMARY KEY," +
+            KEY_TITLE + " TEXT," +
+            KEY_CONTENT + " TEXT," +
+            KEY_DATE_TIME + " LONG," +
+            KEY_COLOR + " TEXT," +
+            KEY_SOFT_DELETE + " BOOLEAN" + ")";
+
+    private static final String DATABASE_ALTER_SOFT_DELETE = "ALTER TABLE "
+            + DATABASE_TABLE + " ADD COLUMN " + KEY_SOFT_DELETE + " BOOLEAN;";
+
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + DATABASE_TABLE + "( " + KEY_ID + " INTEGER PRIMARY KEY," +
-                KEY_TITLE + " TEXT," +
-                KEY_CONTENT + " TEXT," +
-                KEY_DATE_TIME + " LONG," +
-                KEY_COLOR + " TEXT," +
-                KEY_SOFT_DELETE + " BOOLEAN" + ")";
-
-        db.execSQL(query);
+        db.execSQL(SOURCE_DATABASE_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //todo: need to update soft delete logic
-        if (oldVersion >= newVersion)
-            return;
+        if (oldVersion < 3) {
+            db.execSQL(DATABASE_ALTER_SOFT_DELETE);
+        }
     }
 
     public long addNote(Note note) {
@@ -120,6 +123,18 @@ public class NoteDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(DATABASE_TABLE, KEY_ID + "=?", new String[]{String.valueOf(id)});
         db.close();
+    }
+
+    public void deleteMultipleNote(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // db.delete(DATABASE_TABLE, KEY_ID + " IN ?", new String[]{String.valueOf(id)});
+        // db.delete(DATABASE_TABLE, KEY_ID + " IN (" + new String(new char[id.length-1]).replace("\0", "?,") + "?)", id);
+
+        if (db != null) {
+            db.delete(DATABASE_TABLE, KEY_ID + " IN (" + id + ")", null);
+            db.close();
+        }
+        //db.close();
     }
 
     public long softDelete(long noteID, boolean isSoftDeleteEnabled) {
