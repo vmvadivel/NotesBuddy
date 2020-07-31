@@ -1,5 +1,6 @@
 package com.vadivel.notesbuddy.adapter;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vadivel.notesbuddy.R;
@@ -22,11 +24,13 @@ import java.util.ArrayList;
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements Filterable {
     private ArrayList<Note> notes;
     private ArrayList<Note> searchResultNotes;
+    private Context context;
 
 
-    public Adapter(ArrayList<Note> notes) {
+    public Adapter(ArrayList<Note> notes, Context context) {
         this.notes = notes;
         this.searchResultNotes = notes;
+        this.context = context;
     }
 
     @NonNull
@@ -59,6 +63,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
 
         holder.nContent.setText(searchResultNotes.get(position).getContent());
         holder.rootLayout.setAlpha(1);
+        // ((GradientDrawable) holder.rootLayout.getBackground()).setStroke(5, Color.BLACK);
+        if (searchResultNotes.get(position).isSelected() == false) {
+            holder.rootLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.roundededges));
+        } else {
+            holder.rootLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.roundededges_selected));
+        }
         ((GradientDrawable) holder.rootLayout.getBackground()).setColor(Color.parseColor(searchResultNotes.get(position).getColor()));
     }
 

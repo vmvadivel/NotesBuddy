@@ -251,7 +251,7 @@ public class NoteAddEditDeleteActivity extends AppCompatActivity implements View
         if (item.getItemId() == R.id.save) {
             addOrEdit(returnIntent, false);
         } else if (item.getItemId() == R.id.delete) {
-            db.deleteNote(nid);
+            db.softDelete(nid, true);
             returnIntent.putExtra(NotesConstants.KEY_IS_FROM, NotesConstants.NOTE_DELETED);
             returnIntent.putExtra(NotesConstants.KEY_NOTE_ID, nid);
             setResult(Activity.RESULT_OK, returnIntent);

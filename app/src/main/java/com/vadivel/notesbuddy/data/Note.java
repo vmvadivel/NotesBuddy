@@ -6,6 +6,7 @@ public class Note {
     private String content;
     private long currentTimestamp;
     private String color;
+    private boolean isSelected;
 
     Note() {
     }
@@ -79,5 +80,13 @@ public class Note {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
